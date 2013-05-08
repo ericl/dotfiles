@@ -1,0 +1,55 @@
+HISTFILE=~/.zsh_history
+SAVEHIST=50000
+HISTSIZE=50000
+export GREP_OPTIONS='--color=auto' GREP_COLOR='1;31'
+
+# launchpad 204234
+zstyle ':completion:*:killall:*' command 'ps -u $USER -o cmd'
+
+setopt nonomatch autocd bashautolist extendedglob
+setopt incappendhistory histignorealldups nohashall
+unsetopt beep bgnice
+bindkey -e
+setopt correct
+autoload -U compinit zmv
+autoload -U colors
+colors
+compinit
+
+eval `dircolors -b`
+
+__git_branch() {
+  branch=`git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'`
+  if [ -n "$branch" ]; then
+      if [ "$branch" == "master" ]; then
+          echo "#"
+      else
+          echo "#$branch"
+      fi
+  fi
+}
+
+eval _HOME='^\\\/home\\\/$USER'
+precmd() {
+    gitdir=`git rev-parse --show-toplevel 2>/dev/null`
+    gitdirlen=`echo $gitdir | wc -c`
+    gitsuffix=`readlink -f $PWD | cut -c$gitdirlen- | sed "s/$_HOME/~/"`
+    if [ `whoami` == 'root' ]; then
+        color=red
+    else
+        color=blue
+    fi
+    if [ -n "$gitdir" ]; then
+        prefix=`echo $gitdir | sed "s/$_HOME/~/"`
+        export PS1="%{$bg[$color]%}%n@%m%b:${prefix}%B%{$fg[$color]%}`__git_branch`%{$reset_color%}${gitsuffix}$ "
+    else
+        export PS1="%{$bg[$color]%}%n@%m%b:${gitsuffix}$ "
+    fi
+}
+
+source ~/.bash_aliases
+#source ~/bin/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+echo $PATH | grep -q $HOME/bin || source ~/.profile
+export TERM=xterm-256color
+
+echo -en '\r'

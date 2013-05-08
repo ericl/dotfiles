@@ -1,0 +1,112 @@
+# vim:syntax=sh
+
+goto() {
+    RESULTS=`clustered-locate "$@"`
+    if [ ! -n "$RESULTS" ]; then
+        return
+    fi
+    if [ `echo $RESULTS | wc -l` -gt 1 ]; then
+        echo $RESULTS
+    else
+        cd $RESULTS
+    fi
+}
+
+if [ -e .bash_private ]; then
+    source .bash_private
+fi
+
+alias G='ack -ra'
+alias st='git status'
+alias ssh='TERM=xterm ssh'
+alias a='screen -x'
+alias stk='stk-simply'
+alias d='cd ~/Desktop'
+alias duf='du -ak --max-depth 1 . 2>/dev/null | sort -n | perl -ne '\''($s,$f)=split(m{\t});for (qw(K M G)) {if($s<1024) {printf("%.1f",$s);print "$_\t$f"; last};$s=$s/1024}'\'
+alias gitk='gitk --all'
+alias info='info --vi-keys'
+alias java='java -ea'
+alias make='nice -n5 make -j2'
+alias mmv='noglob zmv -W'
+alias n='nautilus . --no-desktop >/dev/null & disown'
+alias N='gksu "nautilus --no-desktop ." >/dev/null & disown'
+alias l='ls -lhSr'
+alias ls='ls --color=auto'
+alias lsa='lsattr -a 2>/dev/null | grep -vE "[-Ie]{18}"'
+alias L='ls -lAhSr'
+alias pg='ps --no-headers -Ao pid,tty,user,time,comm,nice | grep'
+python() {
+	if [ $# -gt 0 ]; then
+		/usr/bin/env python "$@"
+	else
+        ipython --classic --pprint --no-banner --no-confirm-exit
+	fi
+}
+alias sh='SHELL=/bin/sh sh'
+alias sl='ls'
+alias tg='find . -print 2>/dev/null | grep -F'
+
+_mark_backup() {
+	gconftool-2 --set /apps/home-backup/stamp -t int `date +%s`
+}
+
+_home_rsync() {
+	[ -d /media/eric/home_eric_x1_car ] && {
+        rsync -av /home/eric/ /media/eric/home_eric_x1_car
+        _mark_backup
+	}
+	sync
+}
+
+home_backup() {
+	cd /home/eric/Archives/backup
+	./regen_sys.sh || return $?
+	cd -
+	_home_rsync
+}
+
+apt-get() {
+	if echo $@ | grep -q "\(upgrade\|check\|update\|install\|remove\|autoclean\|build-dep\)"; then
+		sudo nice -n10 /usr/bin/apt-get "$@"
+	else
+		/usr/bin/apt-get "$@"
+	fi
+}
+
+vi() {
+# give unity the right command name
+	if echo "$@" | grep -q '\-g'; then
+		gvim "$@" & disown
+	else
+		/usr/bin/vi "$@"
+	fi
+}
+
+g() {
+	local IFS='
+'
+	grep -HIlR$ARGS "$@" `ls -A` 2>/dev/null
+}
+
+reload() {
+	killall "$@"
+	"$@" >/dev/null 2>&1 & disown
+}
+
+# add this to your .bash_profile to use it
+function killport {
+    if [ ! -n "$1" ] || [ $1 == '--help' ] || [ $1 == '-h' ]
+    then
+        echo '`killport <PORT>` kills the process listening on the specified port.'
+    else
+        process_line=`sudo lsof -i :$1 | tail -1`
+        if [ "$process_line" == "" ]
+        then
+            echo "no processes listening on $1"
+        else
+            process_name=`echo "$process_line" | awk '{print $1}'`
+            echo "killing $process_name"
+            sudo kill `echo "$process_line" | awk '{print $2}'`
+        fi
+    fi
+}

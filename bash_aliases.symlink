@@ -16,6 +16,11 @@ if [ -e .bash_private ]; then
     source .bash_private
 fi
 
+alias c='git add . && git add -u . && git commit -a -m "`date`"'
+alias r='cd ~/Desktop/ray'
+alias rl='cd ~/Desktop/ray/python/ray/rllib'
+alias rt='cd ~/Desktop/ray/python/ray/tune'
+
 alias G='ack -ra'
 alias st='git status'
 alias ssh='TERM=xterm ssh'

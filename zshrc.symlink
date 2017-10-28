@@ -1,7 +1,6 @@
 HISTFILE=~/.zsh_history
 SAVEHIST=50000
 HISTSIZE=50000
-export GREP_OPTIONS='--color=auto' GREP_COLOR='1;31'
 
 # launchpad 204234
 zstyle ':completion:*:killall:*' command 'ps -u $USER -o cmd'

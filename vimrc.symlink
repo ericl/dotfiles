@@ -3,6 +3,7 @@ let g:EclimHtmlValidate = 0
 let g:EclimXmlValidate = 0
 let g:HtmlDjangoCompleteEndTag = 0
 
+set guioptions-=T
 set t_Co=256
 colorscheme slate
 set autoindent

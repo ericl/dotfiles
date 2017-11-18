@@ -21,7 +21,7 @@ alias r='cd ~/Desktop/ray'
 alias rl='cd ~/Desktop/ray/python/ray/rllib'
 alias rt='cd ~/Desktop/ray/python/ray/tune'
 
-alias G='ack -ra'
+alias G='ack -r'
 alias st='git status'
 alias ssh='TERM=xterm ssh'
 alias a='screen -x'

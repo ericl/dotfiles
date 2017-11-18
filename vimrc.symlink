@@ -2,6 +2,14 @@ let g:EclimSgmlCompleteEndTag = 0
 let g:EclimHtmlValidate = 0
 let g:EclimXmlValidate = 0
 let g:HtmlDjangoCompleteEndTag = 0
+let g:pyindent_open_paren = '&sw'
+let g:pyindent_nested_paren = '&sw'
+let g:pyindent_continue = '&sw'
+
+execute pathogen#infect()
+syntax on
+filetype plugin indent on
+set runtimepath^=~/.vim/bundle/ctrlp.vim
 
 set guioptions-=T
 set t_Co=256
@@ -70,8 +78,9 @@ let mapleader = ","
 nmap <leader>m :w<return>:make<return>
 nmap <leader>e :earlier<return>
 nmap <leader>r :RUN<return><return>
-nmap <leader>p :RUNP<return><return>
-nmap <leader>t :CommandT `git rev-parse --show-toplevel \|\| echo`<return>
+nmap <leader>t :CtrlP `git rev-parse --show-toplevel \|\| echo`<return>
+"nmap <leader>t :FZF<return>
+nmap <leader>gd :VCSDiff<return>
 autocmd BufEnter * cd %:p:h
 
 "set guifont=Mono\ 9
@@ -97,12 +106,14 @@ augroup vimrc_filetype
 augroup end
 
 function! s:myCSettings()
+    set ts=2 sw=2
 	map \ :s/^/\/\//<CR>:nohlsearch<CR> x
 endfunction
 
 function! s:myPythonSettings()
 	map \ :s/^/#/<CR>:nohlsearch<CR> x
 	set expandtab
+    set colorcolumn=80
 endfunction
 
 function! s:mySchemeSettings()
